@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { MdLink } from "react-icons/md";
+import { FaRobot } from "react-icons/fa";
 import Heading from "../../components/Heading";
 import { useSelector } from "react-redux";
 import axiosWrapper from "../../utils/AxiosWrapper";
 import toast from "react-hot-toast";
 import CustomButton from "../../components/CustomButton";
 import Loading from "../../components/Loading";
+import { useNavigate } from "react-router-dom";
 
 const Material = () => {
   const [materials, setMaterials] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
   const userData = useSelector((state) => state.userData);
+  const navigate = useNavigate();
+
   const [filters, setFilters] = useState({
     subject: "",
     type: "",
@@ -41,7 +45,7 @@ const Material = () => {
         setSubjects(response.data.data);
       }
     } catch (error) {
-      if (error && error.response && error.response.status === 404) {
+      if (error?.response?.status === 404) {
         setSubjects([]);
         return;
       }
@@ -68,11 +72,12 @@ const Material = () => {
           Authorization: `Bearer ${localStorage.getItem("userToken")}`,
         },
       });
+
       if (response.data.success) {
         setMaterials(response.data.data);
       }
     } catch (error) {
-      if (error && error.response && error.response.status === 404) {
+      if (error?.response?.status === 404) {
         setMaterials([]);
         return;
       }
@@ -91,8 +96,13 @@ const Material = () => {
   };
 
   return (
-    <div className="w-full mx-auto mt-10 flex justify-center items-start flex-col mb-10">
-      <Heading title="Study Materials" />
+    <div className="w-full mx-auto mt-10 flex flex-col mb-10">
+
+      {/* Header + Chatbot Button */}
+      <div className="w-full flex justify-between items-center">
+        <Heading title="Study Materials" />
+
+      </div>
 
       {!dataLoading && (
         <div className="w-full mt-4">
@@ -141,27 +151,27 @@ const Material = () => {
 
       {!dataLoading && (
         <div className="w-full mt-8 overflow-x-auto">
-          <table className="text-sm min-w-full bg-white">
+          <table className="text-sm min-w-full bg-white rounded-lg overflow-hidden">
             <thead>
               <tr className="bg-blue-500 text-white">
-                <th className="py-4 px-6 text-left font-semibold">File</th>
-                <th className="py-4 px-6 text-left font-semibold">Title</th>
-                <th className="py-4 px-6 text-left font-semibold">Subject</th>
-                <th className="py-4 px-6 text-left font-semibold">Type</th>
+                <th className="py-4 px-6 text-left">File</th>
+                <th className="py-4 px-6 text-left">Title</th>
+                <th className="py-4 px-6 text-left">Subject</th>
+                <th className="py-4 px-6 text-left">Type</th>
               </tr>
             </thead>
             <tbody>
-              {materials && materials.length > 0 ? (
+              {materials.length > 0 ? (
                 materials.map((material) => (
                   <tr key={material._id} className="border-b hover:bg-blue-50">
                     <td className="py-4 px-6">
                       <CustomButton
                         variant="primary"
-                        onClick={() => {
+                        onClick={() =>
                           window.open(
                             `${process.env.REACT_APP_MEDIA_LINK}/${material.file}`
-                          );
-                        }}
+                          )
+                        }
                       >
                         <MdLink className="text-xl" />
                       </CustomButton>
@@ -173,7 +183,7 @@ const Material = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="text-center text-base pt-10">
+                  <td colSpan="4" className="text-center text-base py-10">
                     No materials found.
                   </td>
                 </tr>

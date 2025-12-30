@@ -15,6 +15,7 @@ import Faculty from "./Screens/Admin/Faculty";
 import Subject from "./Screens/Admin/Subject";
 import Branch from "./Screens/Admin/Branch";
 import Profile from "./Screens/Profile";
+
 import UploadMarks from "./Screens/Faculty/UploadMarks";
 
 const App = () => {

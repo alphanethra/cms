@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 connectToMongo();
-const port = 4000 || process.env.PORT;
+const port =process.env.PORT||8080;
 var cors = require("cors");
 
 app.use(
@@ -32,6 +32,6 @@ app.use("/api/material", require("./routes/material.route"));
 app.use("/api/exam", require("./routes/exam.route"));
 app.use("/api/marks", require("./routes/marks.route"));
 
-app.listen(port, () => {
+app.listen(port,"0.0.0.0", () => {
   console.log(`Server Listening On http://localhost:${port}`);
 });

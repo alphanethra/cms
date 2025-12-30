@@ -8,6 +8,7 @@ import axiosWrapper from "../../utils/AxiosWrapper";
 import Timetable from "./Timetable";
 import Material from "./Material";
 import Profile from "./Profile";
+import GeminiChat from "./GeminiChat";
 import Exam from "../Exam";
 import ViewMarks from "./ViewMarks";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -19,6 +20,7 @@ const MENU_ITEMS = [
   { id: "notice", label: "Notice", component: Notice },
   { id: "exam", label: "Exam", component: Exam },
   { id: "marks", label: "Marks", component: ViewMarks },
+  { id: "Ask AI", label: "Ask AI", component: GeminiChat }, 
 ];
 
 const Home = () => {
