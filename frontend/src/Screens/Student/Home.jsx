@@ -12,6 +12,7 @@ import GeminiChat from "./GeminiChat";
 import Exam from "../Exam";
 import ViewMarks from "./ViewMarks";
 import { useNavigate, useLocation } from "react-router-dom";
+import Chatbot from "../../components/Chatbot"; // ✅ CHATBOT IMPORT
 
 const MENU_ITEMS = [
   { id: "home", label: "Home", component: null },
@@ -27,6 +28,7 @@ const Home = () => {
   const [selectedMenu, setSelectedMenu] = useState("home");
   const [profileData, setProfileData] = useState();
   const [isLoading, setIsLoading] = useState(false);
+
   const dispatch = useDispatch();
   const userToken = localStorage.getItem("userToken");
   const location = useLocation();
@@ -41,6 +43,7 @@ const Home = () => {
           Authorization: `Bearer ${userToken}`,
         },
       });
+
       if (response.data.success) {
         setProfileData(response.data.data);
         dispatch(setUserData(response.data.data));
@@ -48,7 +51,6 @@ const Home = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error(error);
       toast.error(
         error.response?.data?.message || "Error fetching user details"
       );
@@ -62,26 +64,9 @@ const Home = () => {
     fetchUserDetails();
   }, [dispatch, userToken]);
 
-  const getMenuItemClass = (menuId) => {
-    const isSelected = selectedMenu.toLowerCase() === menuId.toLowerCase();
-    return `
-      text-center px-6 py-3 cursor-pointer
-      font-medium text-sm w-full
-      rounded-md
-      transition-all duration-300 ease-in-out
-      ${
-        isSelected
-          ? "bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-lg transform -translate-y-1"
-          : "bg-blue-50 text-blue-700 hover:bg-blue-100"
-      }
-    `;
-  };
-
   const renderContent = () => {
     if (isLoading) {
-      return (
-        <div className="flex justify-center items-center h-64">Loading...</div>
-      );
+      return <div className="text-center mt-10">Loading...</div>;
     }
 
     if (selectedMenu === "home" && profileData) {
@@ -89,18 +74,17 @@ const Home = () => {
     }
 
     const MenuItem = MENU_ITEMS.find(
-      (item) => item.label.toLowerCase() === selectedMenu.toLowerCase()
+      (item) => item.id === selectedMenu
     )?.component;
 
-    return MenuItem && <MenuItem />;
+    return MenuItem ? <MenuItem /> : null;
   };
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const pathMenuId = urlParams.get("page") || "home";
-    const validMenu = MENU_ITEMS.find((item) => item.id === pathMenuId);
-    setSelectedMenu(validMenu ? validMenu.id : "home");
-  }, [location.pathname]);
+    const params = new URLSearchParams(location.search);
+    const page = params.get("page") || "home";
+    setSelectedMenu(page);
+  }, [location.search]);
 
   const handleMenuClick = (menuId) => {
     setSelectedMenu(menuId);
@@ -110,12 +94,17 @@ const Home = () => {
   return (
     <>
       <Navbar />
+
       <div className="max-w-7xl mx-auto">
-        <ul className="flex justify-evenly items-center gap-10 w-full mx-auto my-8">
+        <ul className="flex justify-evenly gap-8 my-8">
           {MENU_ITEMS.map((item) => (
             <li
               key={item.id}
-              className={getMenuItemClass(item.id)}
+              className={`px-6 py-3 cursor-pointer rounded-md ${
+                selectedMenu === item.id
+                  ? "bg-blue-600 text-white"
+                  : "bg-blue-100 text-blue-700"
+              }`}
               onClick={() => handleMenuClick(item.id)}
             >
               {item.label}
@@ -125,6 +114,10 @@ const Home = () => {
 
         {renderContent()}
       </div>
+
+      {/* 🤖 CHATBOT – STUDENT DASHBOARD ONLY */}
+      <Chatbot />
+
       <Toaster position="bottom-center" />
     </>
   );
